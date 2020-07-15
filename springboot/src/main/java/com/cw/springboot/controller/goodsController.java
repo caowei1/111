@@ -54,8 +54,9 @@ public class goodsController {
     @RequestMapping("/create")
     public void createGood(@RequestBody Goods goods){
 
-
+        Goods a = new Goods();
         goodsService.create(goods);
+
     }
 
 
