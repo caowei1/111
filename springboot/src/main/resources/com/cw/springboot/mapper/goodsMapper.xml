@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cw.springboot.mapper.GoodsMapper">
+    <resultMap id="baseMap" type="com.cw.springboot.eneity.Goods">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR"/>
+        <result property="dflag" column="dflag" jdbcType="TINYINT"></result>
+        <association property="category" javaType="com.cw.springboot.eneity.Category">
+            <id property="cid" column="cid" jdbcType="INTEGER"></id>
+            <result property="name" column="name" jdbcType="VARCHAR"></result>
+        </association>
+    </resultMap>
+
+    <select id="findAllGoods" resultType="com.cw.springboot.eneity.Goods" resultMap="baseMap">
+        select * from tb_goods left join tb_category on tb_goods.cid = tb_category.cid
+    </select>
+
+    <update id="deleteGood" parameterType="Long">
+       UPDATE tb_goods set dflag = 0 where id = #{id}
+    </update>
+
+    <update id="update" parameterType="com.cw.springboot.eneity.Goods">
+        UPDATE tb_goods
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="brand != null">
+                brand = #{brand},
+            </if>
+            <if test="category.cid !=null">
+                cid = #{category.cid}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <insert id="create" parameterType="com.cw.springboot.eneity.Goods">
+         INSERT INTO tb_goods(title, price, image, brand,cid,dflag)
+        VALUES(#{title}, #{price}, #{image}, #{brand},#{category.cid},1)
+    </insert>
+
+    <select id="findByRanName" parameterType="String" resultMap="baseMap">
+        select * from tb_goods where tb_goods.title  LIKE CONCAT('%', #{name}, '%')
+    </select>
+</mapper>
